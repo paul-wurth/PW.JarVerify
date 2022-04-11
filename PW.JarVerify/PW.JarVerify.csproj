@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <!-- Package properties -->
+    <PackageId>PW.JarVerify</PackageId>
+    <Version>1.4.0</Version>
+    <Authors>Squared Up Ltd.,Marc Weydert</Authors>
+    <Company>Squared Up Ltd.,Paul Wurth S.A.</Company>
+    <Description>Verify the digital signatures of signed JAR/ZIP archives</Description>
+    <Copyright>Copyright $([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
+    <RepositoryUrl>https://github.com/paul-wurth/PW.JarVerify</RepositoryUrl>
+    <Tags>JAR ZIP sign pkcs archive digital signature</Tags>
+    <!-- Build metadata -->
+    <SourceRevisionId Condition="'$(CIBuildId)' == ''">dev.$([System.Environment]::UserName).$([System.DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssK"))</SourceRevisionId>
+    <SourceRevisionId Condition="'$(CIBuildId)' != ''">ci.$(CIBuildId)</SourceRevisionId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.NetCore" Version="1.8.10" />
+  </ItemGroup>
+</Project>
