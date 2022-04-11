@@ -1,7 +1,9 @@
 <a href="https://www.nuget.org/packages/SquaredUp.JarVerify/" target="_blank"><img src="https://img.shields.io/nuget/v/SquaredUp.JarVerify.svg"/></a>&nbsp;<a href="https://dev.azure.com/squaredup-eng/jar-verify/_build/latest?definitionId=37" target="_blank"><img src="https://dev.azure.com/squaredup-eng/jar-verify/_apis/build/status/jar-verify-CI?branchName=master"/></a>
 
-# JarVerify
+# PW.JarVerify
 Verify the digital signatures of signed JARs (or just any ZIPs signed by `jarsigner`)
+
+Forked from [this project](https://github.com/squaredup/JarVerify) by SquaredUp to add support for .NET 6 and apply some customizations.
 
 ## Dependencies
 Requires BouncyCastle.Crypto for PKCS7 verification
