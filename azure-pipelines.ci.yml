@@ -37,7 +37,7 @@ jobs:
       command: custom
       custom: pack
       projects: $(libProjects)
-      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -p:CIBuildId=$(Build.BuildId)
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -p:CIBuildId=$(Build.BuildId)'
   # Publish to pipeline artifacts
   - task: PublishPipelineArtifact@1
     displayName: Publish library to pipeline artifacts
