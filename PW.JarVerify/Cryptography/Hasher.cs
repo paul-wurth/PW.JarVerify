@@ -14,7 +14,7 @@ namespace JarVerify.Cryptography
 
         public Hasher()
         {
-            _sha = SHA256Managed.Create();
+            _sha = System.Security.Cryptography.SHA256.Create();
         }
 
         public byte[] SHA256(string str)
