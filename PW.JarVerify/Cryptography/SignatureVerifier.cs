@@ -32,12 +32,14 @@ namespace JarVerify.Cryptography
         /// <param name="centralManifest">the main MANIFEST.MF</param>
         /// <param name="signatures">the set of signatures to verify</param>
         /// <param name="certificates">the set of permitted certificates we verify against</param>
+        /// <param name="verifySignatureOnly">whether to verfiy only the signature</param>
         /// <returns>true if all signatures verify as valid - otherwise false</returns>
         public bool Verify(
             IJar jar,
             ManifestData centralManifest,
             List<Signature> signatures,
-            IVerificationCertificates certificates)
+            IVerificationCertificates certificates,
+            bool verifySignatureOnly)
         {
             if (jar == null)
             {
@@ -66,7 +68,7 @@ namespace JarVerify.Cryptography
                 Log.Message($"Signature {sig.BaseName} @ {sig.ManifestPath} with block {sig.Block.Path} type {sig.Block.Type}");
 
                 // Sign file hash mismatch
-                if (!VerifyManifestHashes(centralManifest, signFile))
+                if (!verifySignatureOnly && !VerifyManifestHashes(centralManifest, signFile))
                 {
                     return false;
                 }

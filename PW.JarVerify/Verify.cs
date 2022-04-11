@@ -47,10 +47,11 @@ namespace JarVerify
         /// <param name="filename">JAR filename</param>
         /// <param name="certificates">certificate to verify / accept against</param>
         /// <param name="nonStandardCountCheck">whether to perform the additional file count verification check against 
+        /// <param name="verifySignatureOnly">whether to verfiy only the signature</param>
         /// MANIFEST.MF (recommended if the file is actually an arbitrary ZIP)</param>
         /// <returns>digital signature verification state of the JAR</returns>
         public static VerificationResult Jar(string filename, IVerificationCertificates certificates,
-            bool nonStandardCountCheck = true)
+            bool nonStandardCountCheck = true, bool verifySignatureOnly = false)
         {
             if (filename.IsNullOrEmpty())
             {
@@ -65,7 +66,7 @@ namespace JarVerify
 
             using (IJar jar = new Jar(filename))
             {
-                return Jar(jar, certificates, nonStandardCountCheck);
+                return Jar(jar, certificates, nonStandardCountCheck, verifySignatureOnly);
             }
         }
 
@@ -75,10 +76,11 @@ namespace JarVerify
         /// <param name="stream">JAR file stream</param>
         /// <param name="certificates">certificate to verify / accept against</param>
         /// <param name="nonStandardCountCheck">whether to perform the additional file count verification check against 
+        /// <param name="verifySignatureOnly">whether to verfiy only the signature</param>
         /// MANIFEST.MF (recommended if the file is actually an arbitrary ZIP)</param>
         /// <returns>digital signature verification state of the JAR</returns>
         public static VerificationResult Jar(Stream stream, IVerificationCertificates certificates,
-            bool nonStandardCountCheck = true)
+            bool nonStandardCountCheck = true, bool verifySignatureOnly = false)
         {
             if (stream == null)
             {
@@ -92,7 +94,7 @@ namespace JarVerify
 
             using (IJar jar = new Jar(stream))
             {
-                return Jar(jar, certificates, nonStandardCountCheck);
+                return Jar(jar, certificates, nonStandardCountCheck, verifySignatureOnly);
             }
         }
 
@@ -103,9 +105,11 @@ namespace JarVerify
         /// by this method</param>
         /// <param name="certificates">certificate to verify / accept against</param>
         /// <param name="nonStandardCountCheck">whether to perform the additional file count verification check against 
+        /// <param name="verifySignatureOnly">whether to verfiy only the signature</param>
         /// MANIFEST.MF (recommended if the file is actually an arbitrary ZIP)</param>
         /// <returns>digital signature verification state of the JAR</returns>
-        public static VerificationResult Jar(IJar jar, IVerificationCertificates certificates, bool nonStandardCountCheck = true)
+        public static VerificationResult Jar(IJar jar, IVerificationCertificates certificates,
+            bool nonStandardCountCheck = true, bool verifySignatureOnly = false)
         {
             // Unsigned ZIP and probably not even a JAR
             if (!jar.Contains(@"META-INF\MANIFEST.MF"))
@@ -121,7 +125,7 @@ namespace JarVerify
 
             ManifestData centralManifest = manifestLoader.Load(jar, @"META-INF\MANIFEST.MF");
 
-            if (nonStandardCountCheck)
+            if (nonStandardCountCheck && !verifySignatureOnly)
             {
                 // Non-standard check: Ensure that no unsigned files have been ADDED
                 // to the JAR (file qty. [except signature itself] must match manifest entries)
@@ -140,26 +144,29 @@ namespace JarVerify
                 }
             }
 
-            // Verify the hashes of every file in the JAR
-            //
-            using (var h = new Hasher())
+            if (!verifySignatureOnly)
             {
-                Log.Message($"Central manifest contains {centralManifest.Entries.Count} entries");
-
-                foreach (ManifestEntry e in centralManifest.Entries)
+                // Verify the hashes of every file in the JAR
+                //
+                using (var h = new Hasher())
                 {
-                    Log.Message($"Digest check {e.Path} ({e.Digest})");
+                    Log.Message($"Central manifest contains {centralManifest.Entries.Count} entries");
 
-                    // Check each file matches the hash in the manifest
-                    if (jar.SHA256(h, e.Path).ToBase64() != e.Digest)
+                    foreach (ManifestEntry e in centralManifest.Entries)
                     {
-                        Log.Message($"{e.Path} has an incorrect digest");
+                        Log.Message($"Digest check {e.Path} ({e.Digest})");
 
-                        return new VerificationResult
+                        // Check each file matches the hash in the manifest
+                        if (jar.SHA256(h, e.Path).ToBase64() != e.Digest)
                         {
-                            Status = SigningStatus.FundamentalHashMismatch,
-                            Valid = false
-                        };
+                            Log.Message($"{e.Path} has an incorrect digest");
+
+                            return new VerificationResult
+                            {
+                                Status = SigningStatus.FundamentalHashMismatch,
+                                Valid = false
+                            };
+                        }
                     }
                 }
             }
@@ -189,7 +196,7 @@ namespace JarVerify
             //
             SignatureVerifier ver = new SignatureVerifier();
 
-            if (ver.Verify(jar, centralManifest, signatures, certificates))
+            if (ver.Verify(jar, centralManifest, signatures, certificates, verifySignatureOnly))
             {
                 return new VerificationResult
                 {
