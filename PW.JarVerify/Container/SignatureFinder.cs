@@ -1,11 +1,4 @@
-﻿using JarVerify.Manifest;
-using JarVerify.Util;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JarVerify.Util;
 
 namespace JarVerify.Container
 {

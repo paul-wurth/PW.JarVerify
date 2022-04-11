@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JarVerify.Container
+﻿namespace JarVerify.Container
 {  
     /// <summary>
     /// Information about an individual signature (one of possibly many)

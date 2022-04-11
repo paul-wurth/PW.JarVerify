@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JarVerify.Container
+﻿namespace JarVerify.Container
 {
     /// <summary>
     /// Interaction with the contents of a JAR 

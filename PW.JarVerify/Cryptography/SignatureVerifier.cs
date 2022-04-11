@@ -4,12 +4,6 @@ using JarVerify.Manifest;
 using JarVerify.Util;
 using Org.BouncyCastle.Cms;
 using Org.BouncyCastle.X509;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JarVerify.Cryptography
 {
